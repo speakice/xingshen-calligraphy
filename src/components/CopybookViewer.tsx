@@ -54,6 +54,12 @@ export function CopybookViewer({
       pages.slice(index * PAGES_PER_VIEW, (index + 1) * PAGES_PER_VIEW),
   )
   const currentPages = pageGroups[pageIndex] ?? []
+  const displayPages = currentPages
+    .map((src, index) => ({
+      src,
+      pageNumber: pageIndex * PAGES_PER_VIEW + index + 1,
+    }))
+    .reverse()
   const pageCount = pageGroups.length
 
   useEffect(() => {
@@ -255,13 +261,11 @@ export function CopybookViewer({
                   : undefined
               }
             >
-              {currentPages.map((page, index) => (
+              {displayPages.map((page) => (
                 <img
-                  key={`${work.id}-${page}`}
-                  src={page}
-                  alt={`${work.fullTitle}，第 ${
-                    pageIndex * PAGES_PER_VIEW + index + 1
-                  } 页`}
+                  key={`${work.id}-${page.src}`}
+                  src={page.src}
+                  alt={`${work.fullTitle}，第 ${page.pageNumber} 页`}
                   draggable={false}
                 />
               ))}
