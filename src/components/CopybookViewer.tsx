@@ -22,6 +22,7 @@ type CopybookViewerProps = {
 
 const MIN_ZOOM = 0.85
 const MAX_ZOOM = 2.4
+const PAGES_PER_VIEW = 4
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value))
@@ -47,6 +48,13 @@ export function CopybookViewer({
   const [isDragging, setIsDragging] = useState(false)
   const [pageIndex, setPageIndex] = useState(0)
   const pages = work.images ?? []
+  const pageGroups = Array.from(
+    { length: Math.ceil(pages.length / PAGES_PER_VIEW) },
+    (_, index) =>
+      pages.slice(index * PAGES_PER_VIEW, (index + 1) * PAGES_PER_VIEW),
+  )
+  const currentPages = pageGroups[pageIndex] ?? []
+  const pageCount = pageGroups.length
 
   useEffect(() => {
     setZoom(1)
@@ -137,21 +145,21 @@ export function CopybookViewer({
   }
 
   const changePage = (offset: number) => {
-    if (!pages.length) return
-    setPageIndex((current) => clamp(current + offset, 0, pages.length - 1))
+    if (!pageCount) return
+    setPageIndex((current) => clamp(current + offset, 0, pageCount - 1))
     resetView()
   }
 
   const navigateByArrow = (offset: number) => {
-    if (pages.length) {
+    if (pageCount) {
       changePage(offset)
       return
     }
     goToOffset(offset)
   }
 
-  const previousDisabled = pages.length ? pageIndex === 0 : false
-  const nextDisabled = pages.length ? pageIndex === pages.length - 1 : false
+  const previousDisabled = pageCount ? pageIndex === 0 : false
+  const nextDisabled = pageCount ? pageIndex === pageCount - 1 : false
 
   return (
     <section
@@ -234,14 +242,29 @@ export function CopybookViewer({
             transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom})`,
           }}
         >
-          {pages.length ? (
-            <div className="scan-art">
-              <img
-                key={`${work.id}-${pageIndex}`}
-                src={pages[pageIndex]}
-                alt={`${work.fullTitle}，第 ${pageIndex + 1} 页`}
-                draggable={false}
-              />
+          {pageCount ? (
+            <div
+              className={`scan-art${
+                currentPages.length > 1 ? ' is-spread' : ''
+              }`}
+              style={
+                currentPages.length > 1
+                  ? ({
+                      '--spread-ratio': currentPages.length * 0.54,
+                    } as React.CSSProperties)
+                  : undefined
+              }
+            >
+              {currentPages.map((page, index) => (
+                <img
+                  key={`${work.id}-${page}`}
+                  src={page}
+                  alt={`${work.fullTitle}，第 ${
+                    pageIndex * PAGES_PER_VIEW + index + 1
+                  } 页`}
+                  draggable={false}
+                />
+              ))}
             </div>
           ) : (
             <div className={`art-paper art-${work.id}`}>
@@ -279,9 +302,9 @@ export function CopybookViewer({
           )}
         </div>
 
-        {pages.length > 1 && (
+        {pageCount > 1 && (
           <div className="page-indicator" aria-live="polite">
-            第 {pageIndex + 1} / {pages.length} 页
+            第 {pageIndex + 1} / {pageCount} 页
           </div>
         )}
 
@@ -290,7 +313,7 @@ export function CopybookViewer({
           <span>
             {zoom > 1
               ? '拖动画面平移 · 双击还原'
-              : pages.length
+              : pageCount
                 ? '⌘ / Ctrl + 滚轮缩放 · 用左右箭头翻页'
                 : '⌘ / Ctrl + 滚轮缩放'}
           </span>
@@ -301,7 +324,7 @@ export function CopybookViewer({
           className="viewer-arrow viewer-arrow-left"
           onClick={() => navigateByArrow(-1)}
           onPointerDown={(event) => event.stopPropagation()}
-          aria-label={pages.length ? '上一页法帖' : '上一幅法帖'}
+          aria-label={pageCount ? '上一页法帖' : '上一幅法帖'}
           disabled={previousDisabled}
         >
           <ChevronLeft size={18} />
@@ -311,7 +334,7 @@ export function CopybookViewer({
           className="viewer-arrow viewer-arrow-right"
           onClick={() => navigateByArrow(1)}
           onPointerDown={(event) => event.stopPropagation()}
-          aria-label={pages.length ? '下一页法帖' : '下一幅法帖'}
+          aria-label={pageCount ? '下一页法帖' : '下一幅法帖'}
           disabled={nextDisabled}
         >
           <ChevronRight size={18} />

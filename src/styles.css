@@ -820,6 +820,26 @@ input:focus-visible {
   -webkit-user-drag: none;
 }
 
+.scan-art.is-spread {
+  width: min(
+    92%,
+    calc((var(--viewer-height) - 42px) * var(--spread-ratio, 2.16))
+  );
+  height: auto;
+  max-width: 92%;
+  aspect-ratio: var(--spread-ratio, 2.16);
+}
+
+.scan-art.is-spread img {
+  flex: 1 1 25%;
+  width: 25%;
+  max-width: none;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  object-fit: fill;
+}
+
 .art-sheet {
   position: absolute;
   z-index: 1;
@@ -4912,10 +4932,25 @@ input[type="range"]::-moz-range-thumb {
   transform: translateX(-50%);
 }
 
+.copybook-panel.is-compact .scan-art.is-spread {
+  top: 50%;
+  bottom: auto;
+  width: 92%;
+  height: auto;
+  max-width: 92%;
+  aspect-ratio: var(--spread-ratio, 2.16);
+  transform: translate(-50%, -50%);
+}
+
 .copybook-panel.is-compact .scan-art img {
   width: auto;
   max-width: 100%;
   height: 100%;
+}
+
+.copybook-panel.is-compact .scan-art.is-spread img {
+  width: 25%;
+  max-width: none;
 }
 
 .copybook-panel.is-compact .art-paper {
