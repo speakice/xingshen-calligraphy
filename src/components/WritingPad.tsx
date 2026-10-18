@@ -336,6 +336,17 @@ export function WritingPad({
   }
 
   const beginStroke = (point: StrokePoint, pointerId: number | null) => {
+    // A stroke may dwell before the user actually starts moving. Do not start
+    // the auto-lift countdown until movement occurs, otherwise the brush can be
+    // lifted while the user is still preparing the first point of a new stroke.
+    if (hoverPauseTimerRef.current) {
+      window.clearTimeout(hoverPauseTimerRef.current)
+      hoverPauseTimerRef.current = null
+    }
+    if (hoverDwellTimerRef.current) {
+      window.clearTimeout(hoverDwellTimerRef.current)
+      hoverDwellTimerRef.current = null
+    }
     const stroke: Stroke = {
       points: [point],
       size: brushSize,
@@ -399,7 +410,6 @@ export function WritingPad({
       hoverStartPointRef.current = null
       beginStroke(start, null)
       setBrushMessage('已起笔 · 移动鼠标运笔')
-      scheduleHoverLift()
     }, HOVER_START_DELAY)
   }
 
@@ -419,7 +429,6 @@ export function WritingPad({
         const rect = event.currentTarget.getBoundingClientRect()
         beginStroke(pointFromEvent(event.nativeEvent, rect), null)
         setBrushMessage('已起笔 · 移动鼠标运笔')
-        scheduleHoverLift()
       }
       return
     }
