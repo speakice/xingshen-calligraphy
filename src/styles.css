@@ -4780,6 +4780,43 @@ input[type="range"]::-moz-range-thumb {
   scrollbar-width: thin;
 }
 
+.workbench-modes {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(233, 225, 211, 0.44);
+}
+
+.workbench-modes button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  color: var(--ink-muted);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.workbench-modes button:hover:not(.is-active) {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.workbench-modes button.is-active {
+  color: var(--paper-light);
+  background: var(--ink);
+  box-shadow: 0 5px 14px rgba(32, 31, 27, 0.16);
+}
+
 .workbench-copybook {
   display: flex;
   flex: 1 1 140px;
@@ -5399,8 +5436,13 @@ input[type="range"]::-moz-range-thumb {
   }
 
   .workbench-copybooks {
-    order: initial;
-    flex-basis: auto;
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .workbench-modes {
+    order: 2;
+    margin-left: auto;
   }
 
   .workbench-label {

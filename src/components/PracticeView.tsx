@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Eye, PenLine, Scan } from 'lucide-react'
 import type { CharacterStudy, Work } from '../data'
 import { CharacterLibraryDialog } from './CharacterLibraryDialog'
 import { CharacterStrip } from './CharacterStrip'
@@ -7,6 +8,12 @@ import { TechniquePanel } from './TechniquePanel'
 import { WritingPad } from './WritingPad'
 
 type WorkspaceMode = 'browse' | 'technique' | 'practice'
+
+const workspaceModes = [
+  { id: 'browse' as const, label: '观摩', icon: Eye },
+  { id: 'technique' as const, label: '技法', icon: Scan },
+  { id: 'practice' as const, label: '练习', icon: PenLine },
+]
 
 type PracticeViewProps = {
   work: Work
@@ -78,6 +85,26 @@ export function PracticeView({
               </span>
             </button>
           ))}
+        </div>
+        <div className="workbench-modes" role="tablist" aria-label="习字流程">
+          {workspaceModes.map((item) => {
+            const Icon = item.icon
+            return (
+              <button
+                type="button"
+                role="tab"
+                key={item.id}
+                aria-selected={mode === item.id}
+                className={mode === item.id ? 'is-active' : ''}
+                onClick={() =>
+                  item.id === 'practice' ? openPractice() : setMode(item.id)
+                }
+              >
+                <Icon size={13} strokeWidth={1.8} />
+                <span>{item.label}</span>
+              </button>
+            )
+          })}
         </div>
       </header>
 
