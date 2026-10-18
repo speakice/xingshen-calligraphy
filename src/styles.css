@@ -724,6 +724,7 @@ input:focus-visible {
     #dcd3c2;
   place-items: center;
   touch-action: pan-y;
+  container-type: size;
 }
 
 .art-viewport::before {
@@ -823,7 +824,7 @@ input:focus-visible {
 .scan-art.is-spread {
   width: min(
     92%,
-    calc((var(--viewer-height) - 42px) * var(--spread-ratio, 2.16))
+    calc((100cqh - 42px) * var(--spread-ratio, 2.16))
   );
   height: auto;
   max-width: 92%;
@@ -4935,7 +4936,10 @@ input[type="range"]::-moz-range-thumb {
 .copybook-panel.is-compact .scan-art.is-spread {
   top: 50%;
   bottom: auto;
-  width: 92%;
+  width: min(
+    92%,
+    calc((100cqh - 22px) * var(--spread-ratio, 2.16))
+  );
   height: auto;
   max-width: 92%;
   aspect-ratio: var(--spread-ratio, 2.16);
